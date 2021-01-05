@@ -1,0 +1,1214 @@
+<-ScaleButton@Button>:
+	state_image: self.background_normal if self.state == 'normal' else self.background_down
+	disabled_image: self.background_disabled_normal if self.state == 'normal' else self.background_disabled_down
+	_scale: 1. if self.texture_size[0] < self.width else float(self.width) / self.texture_size[0]
+	canvas:
+		Color:
+			rgba: self.background_color
+		BorderImage:
+			border: self.border
+			pos: self.pos
+			size: self.size
+			source: self.disabled_image if self.disabled else self.state_image
+		PushMatrix
+		Scale:
+			origin: self.center
+			x: self._scale or 1.
+			y: self._scale or 1.
+		Color:
+			rgba: self.disabled_color if self.disabled else self.color
+		Rectangle:
+			texture: self.texture
+			size: self.texture_size
+			pos: int(self.center_x - self.texture_size[0] / 2.), int(self.center_y - self.texture_size[1] / 2.)
+		PopMatrix
+
+<SpacerLayout@GridLayout>:
+    cols:1
+    size_hint_x: 0.1
+
+<OddRow>
+    rows:1
+    padding: [10, 0, 10, 10]
+
+    canvas.before:
+        Color:
+            rgba: 1, 0.6, 0.2, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+
+<EvenRow>
+    rows:1
+    padding: [10, 0, 10, 10]
+
+    canvas.before:
+        Color:
+            rgba: 1, 0.8, 0.6, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<KAMBLabel@Label>:
+    padding: (2.5, 2.5)
+    size_hint_y: None
+    text_size: self.width, None
+    height: self.texture_size[1]
+    halign: "center"
+    outline_width: 2
+    outline_color: 0,0,0
+    bold: True
+    markup:True
+
+<KAMBButton@ScaleButton>:
+    bold: True
+    font_size: self.height * 0.4
+    background_normal: "atlas://data/images/defaulttheme/button_disabled"
+    background_color: 1, 1, 1, 1
+    color: 1, 0.6, 0.2, 1
+    outline_width: 2
+    outline_color: 0,0,0
+
+<KAMBSkillLabel@ButtonBehavior+KAMBLabel>:
+    halign: "left"
+
+<KAMBCheckBox@CheckBox>:
+    color: 0, 0, 0, 1
+    halign: "right"
+
+
+<KAMBPopup@Popup>:
+
+
+<LandingScreen>:
+    GridLayout:
+        cols: 1
+
+        Label:
+            text: "KAMB"
+        Label:
+            text: "in silico"
+        KAMBButton:
+            text: "Create a Kobold"
+            on_press: app.sm.current = "StatsAndSkills"
+
+
+<StatsAndSkills>:
+    bully_check: bully_check
+    lift_check: lift_check
+    duel_check: duel_check
+    sport_check: sport_check
+    heft_check: heft_check
+    swim_check: swim_check
+    wrassle_check: wrassle_check
+    fear_check: fear_check
+    shoot_check: shoot_check
+    lackey_check: lackey_check
+    human_check: human_check
+    sage_check: sage_check
+    trap_check: trap_check
+    tinker_check: tinker_check
+    bard_check: bard_check
+    perform_check: perform_check
+    cook_check: cook_check
+    critter_check: critter_check
+    dungeon_check: dungeon_check
+    track_check: track_check
+    nature_check: nature_check
+    trade_check: trade_check
+    fast_check: fast_check
+    ride_check: ride_check
+    hide_check: hide_check
+    sneak_check: sneak_check
+    nurture_check: nurture_check
+    steal_check: steal_check
+    wiggle_check: wiggle_check
+    GridLayout:
+        cols: 1
+
+        KAMBButton:
+            size_hint_y: 0.12
+            text: "Click here to roll some STATs"
+            on_press:
+                app.kobold_create()
+                root.get_stats()
+
+        GridLayout:
+            cols: 2
+
+            GridLayout:
+                rows: 4
+                OddRow:
+                    GridLayout:
+                        id: brawn_stats and skills
+                        cols:5
+
+                        SpacerLayout:
+
+                        GridLayout:
+                            cols:1
+                            size_hint_x: 0.35
+
+                            KAMBLabel:
+                                text: "Brawn"
+                            GridLayout:
+                                cols:2
+                                rows:4
+
+                                KAMBLabel:
+                                    text: "Roll 1"
+                                KAMBLabel:
+                                    text: "Roll 2"
+                                KAMBLabel:
+                                    id: brawn1
+                                    text: str(app.brawn1)
+                                KAMBLabel:
+                                    id: brawn2
+                                    text: str(app.brawn2)
+                                KAMBLabel:
+                                    text: "Total"
+                                KAMBLabel:
+                                    text: "Meat"
+                                KAMBLabel:
+                                    id: brawn
+                                    text: str(app.brawn)
+                                KAMBLabel:
+                                    id: meat
+                                    text: str(app.meat)
+
+                        SpacerLayout:
+
+                        GridLayout:
+                            cols:1
+                            KAMBLabel:
+                                text: "Brawn Skills"
+
+                            GridLayout:
+                                cols:2
+
+                                BoxLayout:
+
+                                    KAMBCheckBox:
+                                        id:bully_check
+
+                                    KAMBSkillLabel:
+                                        id:bully_text
+                                        text: "Bully"
+                                        on_press: bully_check._do_press()
+
+                                BoxLayout:
+
+                                    KAMBCheckBox:
+                                        id:lift_check
+
+                                    KAMBSkillLabel:
+                                        id:lift_text
+                                        text: "Lift"
+                                        on_press: lift_check._do_press()
+
+                                BoxLayout:
+
+                                    KAMBCheckBox:
+                                        id:duel_check
+
+                                    KAMBSkillLabel:
+                                        id:duel_text
+                                        text: "Duel[size=20]![/size]"
+                                        on_press: duel_check._do_press()
+
+                                BoxLayout:
+
+                                    KAMBCheckBox:
+                                        id:sport_check
+
+                                    KAMBSkillLabel:
+                                        id:sport_text
+                                        text: "Sport"
+                                        on_press: sport_check._do_press()
+
+                                BoxLayout:
+
+                                    KAMBCheckBox:
+                                        id:heft_check
+
+                                    KAMBSkillLabel:
+                                        id:heft_text
+                                        text: "Heft[size=20]![/size]"
+                                        on_press: heft_check._do_press()
+
+                                BoxLayout:
+
+                                    KAMBCheckBox:
+                                        id:swim_check
+
+                                    KAMBSkillLabel:
+                                        id:swim_text
+                                        text: "Swim"
+                                        on_press: swim_check._do_press()
+
+                                BoxLayout:
+
+                                    KAMBCheckBox:
+                                        id:wrassle_check
+
+                                    KAMBSkillLabel:
+                                        id:wrassle_text
+                                        text: "Wrassle"
+                                        on_press: wrassle_check._do_press()
+
+                        SpacerLayout:
+
+                EvenRow:
+                    GridLayout:
+                        id: ego_stats and skills
+                        cols:5
+
+                        SpacerLayout:
+
+                        GridLayout:
+                            cols:1
+                            size_hint_x: 0.35
+
+                            KAMBLabel:
+                                text: "Ego"
+
+                            GridLayout:
+                                cols:2
+                                rows:4
+
+                                KAMBLabel:
+                                    text: "Roll 1"
+
+                                KAMBLabel:
+                                    text: "Roll 2"
+
+                                KAMBLabel:
+                                    id: ego1
+                                    text: str(app.ego1)
+
+                                KAMBLabel:
+                                    id: ego2
+                                    text: str(app.ego2)
+
+                                KAMBLabel:
+                                    text: "Total"
+
+                                KAMBLabel:
+                                    text: "Cunning"
+
+                                KAMBLabel:
+                                    id: ego
+                                    text: str(app.ego)
+
+                                KAMBLabel:
+                                    id: cunning
+                                    text: str(app.cunning)
+
+                        SpacerLayout:
+
+                        GridLayout:
+                            cols:1
+                            KAMBLabel:
+                                text: "Ego Skills"
+
+                            GridLayout:
+                                cols:2
+
+                                BoxLayout:
+                                    KAMBCheckBox:
+                                        id:fear_check
+
+                                    KAMBSkillLabel:
+                                        id:fear_text
+                                        text: "Fear[size=20]![/size]"
+                                        on_press: fear_check._do_press()
+
+                                BoxLayout:
+
+                                    KAMBCheckBox:
+                                        id:shoot_check
+
+                                    KAMBSkillLabel:
+                                        id:shoot_text
+                                        text: "Shoot"
+                                        on_press: shoot_check._do_press()
+
+                                BoxLayout:
+
+                                    KAMBCheckBox:
+                                        id:lackey_check
+
+                                    KAMBSkillLabel:
+                                        id:lackey_text
+                                        text: "Lackey[size=20]![/size]"
+                                        on_press: lackey_check._do_press()
+
+                                BoxLayout:
+
+                                    KAMBCheckBox:
+                                        id:human_check
+
+                                    KAMBSkillLabel:
+                                        id:human_text
+                                        text: "S. Human"
+                                        on_press: human_check._do_press()
+
+                                BoxLayout:
+
+                                    KAMBCheckBox:
+                                        id:sage_check
+
+                                    KAMBSkillLabel:
+                                        id:sage_text
+                                        text: "Sage[size=20]![/size]"
+                                        on_press: sage_check._do_press()
+
+                                BoxLayout:
+
+                                    KAMBCheckBox:
+                                        id:trap_check
+
+                                    KAMBSkillLabel:
+                                        id:trap_text
+                                        text: "Trap"
+                                        on_press: trap_check._do_press()
+
+                                BoxLayout:
+
+                                    KAMBCheckBox:
+                                        id:tinker_check
+
+                                    KAMBSkillLabel:
+                                        id:tinker_text
+                                        text: "Tinker"
+                                        on_press: tinker_check._do_press()
+
+                        SpacerLayout:
+
+                OddRow:
+                    GridLayout:
+                        id: extraneous_stats and skills
+                        cols:5
+
+                        SpacerLayout:
+
+                        GridLayout:
+                            cols:1
+                            size_hint_x: 0.35
+
+
+                            KAMBLabel:
+                                text: "Extraneous"
+                            GridLayout:
+                                cols:2
+                                rows:4
+
+                                KAMBLabel:
+                                    text: "Roll 1"
+
+                                KAMBLabel:
+                                    text: "Roll 2"
+
+                                KAMBLabel:
+                                    id: extraneous1
+                                    text: str(app.extraneous1)
+
+                                KAMBLabel:
+                                    id: extraneous2
+                                    text: str(app.extraneous2)
+
+                                KAMBLabel:
+                                    text: "Total"
+
+                                KAMBLabel:
+                                    text: "Luck"
+
+                                KAMBLabel:
+                                    id: extraneous
+                                    text: str(app.extraneous)
+
+                                KAMBLabel:
+                                    id: luck
+                                    text: str(app.luck)
+
+                        SpacerLayout:
+
+                        GridLayout:
+                            cols:1
+                            KAMBLabel:
+                                text: "Extraneous Skills"
+
+                            GridLayout:
+                                cols:2
+
+                                BoxLayout:
+
+                                    KAMBCheckBox:
+                                        id:bard_check
+
+                                    KAMBSkillLabel:
+                                        id:bard_text
+                                        text: "Bard"
+                                        on_press: bard_check._do_press()
+
+                                BoxLayout:
+
+                                    KAMBCheckBox:
+                                        id:perform_check
+
+                                    KAMBSkillLabel:
+                                        id:perform_text
+                                        text: "Perform"
+                                        on_press: perform_check._do_press()
+
+                                BoxLayout:
+
+                                    KAMBCheckBox:
+                                        id:cook_check
+
+                                    KAMBSkillLabel:
+                                        id:cook_text
+                                        text: "Cook"
+                                        on_press: cook_check._do_press()
+
+                                BoxLayout:
+
+                                    KAMBCheckBox:
+                                        id:critter_check
+
+                                    KAMBSkillLabel:
+                                        id:critter_text
+                                        text: "S. Critter"
+                                        on_press: critter_check._do_press()
+
+                                BoxLayout:
+
+                                    KAMBCheckBox:
+                                        id:dungeon_check
+
+                                    KAMBSkillLabel:
+                                        id:dungeon_text
+                                        text: "Dungeon"
+                                        on_press: dungeon_check._do_press()
+
+                                BoxLayout:
+
+                                    KAMBCheckBox:
+                                        id:track_check
+
+                                    KAMBSkillLabel:
+                                        id:track_text
+                                        text: "Track"
+                                        on_press: track_check._do_press()
+
+                                BoxLayout:
+
+                                    KAMBCheckBox:
+                                        id:nature_check
+
+                                    KAMBSkillLabel:
+                                        id:nature_text
+                                        text: "Nature"
+                                        on_press: nature_check._do_press()
+
+                                BoxLayout:
+
+                                    KAMBCheckBox:
+                                        id:trade_check
+
+                                    KAMBSkillLabel:
+                                        id:trade_text
+                                        text: "Trade[size=20]![/size]"
+                                        on_press: trade_check._do_press()
+
+                        SpacerLayout:
+
+                EvenRow:
+                    GridLayout:
+                        id: reflexes_stats and skills
+                        cols:5
+
+                        SpacerLayout:
+
+                        GridLayout:
+                            cols:1
+                            size_hint_x: 0.35
+
+
+                            KAMBLabel:
+                                text: "Reflexes"
+
+                            GridLayout:
+                                cols:2
+                                rows:4
+
+                                KAMBLabel:
+                                    text: "Roll 1"
+
+                                KAMBLabel:
+                                    text: "Roll 2"
+
+                                KAMBLabel:
+                                    id: reflexes1
+                                    text: str(app.reflexes1)
+
+                                KAMBLabel:
+                                    id: reflexes2
+                                    text: str(app.reflexes2)
+
+                                KAMBLabel:
+                                    text: "Total"
+
+                                KAMBLabel:
+                                    text: "Agility"
+
+                                KAMBLabel:
+                                    id: reflexes
+                                    text: str(app.reflexes)
+
+                                KAMBLabel:
+                                    id: agility
+                                    text: str(app.agility)
+
+                        SpacerLayout:
+
+                        GridLayout:
+                            cols:1
+                            KAMBLabel:
+                                text: "Reflex Skills"
+
+                            GridLayout:
+                                cols:2
+
+                                BoxLayout:
+
+                                    KAMBCheckBox:
+                                        id:fast_check
+
+                                    KAMBSkillLabel:
+                                        id:fast_text
+                                        text: "Fast"
+                                        on_press: fast_check._do_press()
+
+                                BoxLayout:
+
+                                    KAMBCheckBox:
+                                        id:ride_check
+
+                                    KAMBSkillLabel:
+                                        id:ride_text
+                                        text: "Ride"
+                                        on_press: ride_check._do_press()
+
+                                BoxLayout:
+
+                                    KAMBCheckBox:
+                                        id:hide_check
+
+                                    KAMBSkillLabel:
+                                        id:hide_text
+                                        text: "Hide[size=20]![/size]"
+                                        on_press: hide_check._do_press()
+
+                                BoxLayout:
+
+                                    KAMBCheckBox:
+                                        id:sneak_check
+
+                                    KAMBSkillLabel:
+                                        id:sneak_text
+                                        text: "Sneak"
+                                        on_press: sneak_check._do_press()
+
+                                BoxLayout:
+
+                                    KAMBCheckBox:
+                                        id:nurture_check
+
+                                    KAMBSkillLabel:
+                                        id:nurture_text
+                                        text: "Nurture"
+                                        on_press: nurture_check._do_press()
+
+                                BoxLayout:
+
+                                    KAMBCheckBox:
+                                        id:steal_check
+
+                                    KAMBSkillLabel:
+                                        id:steal_text
+                                        text: "Steal"
+                                        on_press: steal_check._do_press()
+
+                                BoxLayout:
+
+                                    KAMBCheckBox:
+                                        id:wiggle_check
+
+                                    KAMBSkillLabel:
+                                        id:wiggle_text
+                                        text: "Wiggle"
+                                        on_press: wiggle_check._do_press()
+
+                        SpacerLayout:
+
+            GridLayout:
+                cols: 1
+                size_hint_x: 0.25
+
+                GridLayout:
+                    rows:2
+                    size_hint_y:0.5
+
+                    KAMBLabel:
+                        halign: 'center'
+                        text_size: root.width * 0.15, None
+                        text: "Now you may take up to your max skills (below), taking at least 1 skill in each STAT when possible, and no more than 2."
+
+
+                GridLayout:
+                    cols: 1
+
+                    KAMBLabel:
+                        halign: 'center'
+                        text_size: root.width * 0.15, None
+                        text: "Max Skills"
+
+                    KAMBLabel:
+                        halign: 'center'
+                        text_size: root.width * 0.15, None
+                        id: max_skills
+                        text: str(app.max_skills)
+
+                    KAMBLabel:
+                        halign: 'center'
+                        text_size:
+                        text: "Death Cheques"
+
+                    KAMBLabel:
+                        id: death_checks
+                        halign: 'center'
+                        text: str(app.death_checks)
+
+                    KAMBLabel:
+                        halign: 'center'
+                        text_size:
+                        text: "Victory Points"
+
+                    KAMBLabel:
+                        id: vps
+                        halign: 'center'
+                        text: str(app.vps)
+
+                    KAMBLabel:
+                        halign: 'center'
+                        text_size: root.width * 0.15, None
+                        text: "[size=24]'!'[/size] next to a skill means it is [b]DANGEROUS![/b] Also, all Kobolds should know Cook, if you don't you take a death cheque."
+
+
+
+        KAMBButton:
+            size_hint_y: 0.12
+            text: "Click here when stats are rolled and skills selected"
+            on_press:
+                root.check_skills_and_move_on()
+
+<EdgesBogiesAndEquipment>:
+    GridLayout:
+        cols: 1
+
+        KAMBButton:
+            size_hint_y: 0.12
+            text: "Roll for +Edges and -Bogies"
+            on_press:
+                root.roll_edges_and_bogies()
+
+        OddRow:
+            size_hint_y: 0.4
+            cols: 2
+            rows:4
+
+            KAMBLabel:
+                text: "+Edges"
+
+            KAMBLabel:
+                text: "-Bogies"
+
+            KAMBButton:
+                id: edges
+                text: str(app.edges)
+                # TODO: Add on press and function
+
+            KAMBButton:
+                id: bogies
+                text: str(app.bogies)
+                # TODO: Add on press and function
+
+            KAMBButton:
+                text:"+Kobold Senses"
+                on_press:
+                    app.kobold_senses_popup()
+
+            KAMBButton:
+                text:"-Tastes Like Kobold"
+                # TODO: Add on press and function
+
+            KAMBButton:
+                text:"+Bark Like a Kobold"
+                # TODO: Add on press and function
+
+            KAMBButton:
+                text:"-Fearless"
+                # TODO: Add on press and function
+
+        EvenRow:
+            cols:1
+            rows:2
+
+            KAMBLabel:
+                size_hint_y: 0.15
+                font_size: self.height * 0.9
+                text: "The Three Great Piles"
+
+
+            OddRow:
+                cols: 3
+                rows:4
+
+                GridLayout:
+                    size_hint_y:0.35
+                    cols:1
+                    rows:2
+
+                    KAMBLabel:
+                        halign: "center"
+                        size: self.width, self.height
+                        text: "The Pile of Things That You Can Wear To Maybe Not To Die Pile"
+
+                    KAMBLabel:
+                        halign: "center"
+                        text:"(The Armour Pile)"
+
+
+
+                GridLayout:
+                    size_hint_y:0.35
+                    cols:1
+                    rows:2
+
+                    KAMBLabel:
+                        halign: "center"
+                        size: self.width , self.height
+                        text: "The Pile of Things That You Can Maybe Hit Somebody With Pile"
+
+                    KAMBLabel:
+                        halign: "center"
+                        text:"(The Weapons Pile)"
+
+
+
+                GridLayout:
+                    size_hint_y:0.35
+                    cols:1
+                    rows:2
+
+                    KAMBLabel:
+                        halign: "center"
+                        size: self.width, self.height
+                        text: "The Pile of Things That are Basically Just Like Things, You Know? Pile"
+
+                    KAMBLabel:
+                        halign: "center"
+                        text:"(The Gear Pile)"
+
+                GridLayout:
+                    rows:3
+
+                    KAMBButton:
+                        size_hint_y:0.5
+                        halign: 'center'
+                        valign: 'center'
+                        text: "The Basic\n Random\n Armour Pile\n(Sport helps here)"
+                        font_size: self.height * 0.15
+                        on_press:
+                            root.basic_armour()
+
+                    KAMBButton:
+                        size_hint_y:0.5
+                        halign: 'center'
+                        valign: 'center'
+                        text: "The DANGEROUS!\n Seasoned Veteran's Random\n Armour Pile\n(Lift helps here)"
+                        font_size: self.height * 0.15
+                        on_press:
+                            root.dangerous_armour()
+
+                    KAMBLabel:
+                        size_hint_y:0.3
+                        id: armour
+                        text: str(app.armour_name)
+
+                GridLayout:
+                    rows:4
+
+                    KAMBButton:
+                        size_hint_y:0.5
+                        halign: 'center'
+                        valign: 'center'
+                        text: "The Basic\n Random\n Weapon Pile\n(Heft helps here,\n or shoot for ranged)"
+                        font_size: self.height * 0.15
+                        on_press:
+                            root.basic_weapon()
+
+                    KAMBButton:
+                        size_hint_y:0.5
+                        halign: 'center'
+                        valign: 'center'
+                        text: "The DANGEROUS!\n Elite Soldier's Random\n Weapon Pile\n(Duel helps here)"
+                        font_size: self.height * 0.15
+                        on_press:
+                            root.dangerous_weapon()
+
+                    KAMBLabel:
+                        size_hint_y:0.3
+                        id: weapon
+                        text: str(app.weapon_name)
+
+                GridLayout:
+                    rows:3
+
+                    KAMBButton:
+                        size_hint_y:0.5
+                        halign: 'center'
+                        valign: 'center'
+                        text: "The Basic\n Random\n Gear Pile\n(Nature helps here)"
+                        font_size: self.height * 0.15
+                        on_press:
+                            root.basic_gear()
+
+                    KAMBButton:
+                        size_hint_y:0.5
+                        halign: 'center'
+                        valign: 'center'
+                        text: "The DANGEROUS!\n Expert Trader's Random\n Gear Pile\n(Dungeon helps here)"
+                        font_size: self.height * 0.15
+                        on_press:
+                            root.dangerous_gear()
+
+                    KAMBLabel:
+                        size_hint_y:0.3
+                        id: gear
+                        text: str(app.gear_name)
+        GridLayout:
+            size_hint_y:0.05
+            cols:2
+            rows:1
+            KAMBLabel:
+                text:"Your Skills to help you choose which piles to dive into: "
+            KAMBLabel:
+                text: str(app.string_of_skills)
+
+        KAMBButton:
+            size_hint_y: 0.12
+            text: "Click here when you have your +Edges, -Bogies and gear"
+            on_press:
+                root.move_on_to_character_sheet()
+
+<KoboldSheet>:
+    cols:1
+    # TODO: Add magic button, with popup? that looks for lackey spell or spell pages and if neither, give witty text
+
+    GridLayout:
+        cols: 1
+
+        OddRow:
+            size_hint_max_y: root.height * 0.075
+
+            GridLayout:
+                cols:2
+
+                KAMBLabel:
+                    text:"Kobold Reference Sheet"
+                GridLayout:
+                    cols:2
+                    TextInput:
+                        id:name
+                        text: str(app.name)
+                        multiline:False
+                    Button:
+                        text:"Save"
+                        on_press:
+                            pass
+
+        GridLayout:
+            cols: 2
+            GridLayout:
+                rows:4
+                size_hint_max_y:root.height * 0.6
+
+                OddRow:
+                    size_hint_x:0.4
+                    size_hint_y:0.1
+                    GridLayout:
+                        cols:2
+
+                        GridLayout:
+                            cols:2
+                            rows:2
+
+                            KAMBLabel:
+                                text:'Brawn:'
+
+                            KAMBLabel:
+                                text: str(app.brawn)
+
+                            KAMBLabel:
+                                text:'Meat:'
+
+                            KAMBLabel:
+                                text: str(app.meat)
+
+                        GridLayout:
+                            cols:2
+
+                            KAMBButton:
+                                text: app.brawn_skill1
+
+                            KAMBButton:
+                                text: app.brawn_skill2
+
+                EvenRow:
+                    cols:2
+                    size_hint_x:0.4
+                    size_hint_y:0.1
+
+                    GridLayout:
+                        cols:2
+                        rows:2
+
+                        KAMBLabel:
+                            text:'Ego:'
+
+                        KAMBLabel:
+                            text: str(app.ego)
+
+                        KAMBLabel:
+                            text:'Cunning:'
+
+                        KAMBLabel:
+                            text: str(app.cunning)
+
+                    GridLayout:
+                        cols:2
+
+                        KAMBButton:
+                            text: app.ego_skill1
+
+                        KAMBButton:
+                            text: app.ego_skill2
+
+                OddRow:
+                    size_hint_x:0.4
+                    size_hint_y:0.1
+                    GridLayout:
+                        cols:1
+                        GridLayout:
+                            cols:2
+                            rows:2
+
+                            KAMBLabel:
+                                text:'Extraneous:'
+
+                            KAMBLabel:
+                                text: str(app.extraneous)
+
+                            KAMBLabel:
+                                text:'Luck:'
+
+                            KAMBLabel:
+                                text: str(app.luck)
+
+                        KAMBButton:
+                            text:"Get Lucky"
+                            on_press:
+                                root.use_luck()
+
+                    GridLayout:
+                        cols:2
+                        KAMBButton:
+
+                            text: app.extraneous_skill1
+
+                        KAMBButton:
+
+
+                            text: app.extraneous_skill2
+
+                EvenRow:
+                    size_hint_x:0.4
+                    size_hint_y:0.1
+                    GridLayout:
+                        cols:2
+                        rows:2
+
+                        KAMBLabel:
+                            text:'Reflexes:'
+
+                        KAMBLabel:
+                            text: str(app.reflexes)
+
+                        KAMBLabel:
+                            text:'Agility:'
+
+                        KAMBLabel:
+                            text: str(app.agility)
+
+                    GridLayout:
+                        cols:2
+
+                        KAMBButton:
+                            text: app.reflexes_skill1
+
+                        KAMBButton:
+                            text: app.reflexes_skill2
+
+            GridLayout:
+                cols:1
+
+                KAMBLabel:
+                    text:"HITs"
+
+                KAMBLabel:
+                    text:"Max Kobold HITs"
+
+                KAMBLabel:
+                    text: str(app.max_hits)
+
+                GridLayout:
+                    size_hint_y:0.3
+                    cols:2
+
+                    KAMBLabel:
+                        text:"Armour HITs"
+
+                    KAMBLabel:
+                        text:"Kobold HITs"
+
+                    TextInput:
+                        id:a_hits
+                        input_filter:"int"
+                        multiline: False
+                        text: str(app.armour_hits)
+
+                    TextInput:
+                        id:k_hits
+                        input_filter:"int"
+                        multiline: False
+                        text: str(app.hits)
+
+
+                GridLayout:
+                    cols:2
+                    KAMBLabel:
+                        size_hint_y: 0.1
+                        text:"+Edge"
+
+                    KAMBLabel:
+                        size_hint_y: 0.1
+                        text:"-Bogie"
+
+                    KAMBButton:
+                        size_hint_y: 0.1
+                        text: str(app.edges)
+
+                    KAMBButton:
+                        size_hint_y: 0.1
+                        text: str(app.bogies)
+
+                    KAMBButton:
+                        size_hint_y: 0.1
+                        text:"+Kobold Senses"
+                        on_press:
+                            app.kobold_senses_popup()
+
+                    KAMBButton:
+                        size_hint_y: 0.1
+                        text:"-Tastes Like Kobold"
+                        # TODO: Add on press and function
+
+                    KAMBButton:
+                        size_hint_y: 0.1
+                        text:"+Bark Like A Kobold"
+                        # TODO: Add on press and function
+
+                    KAMBButton:
+                        size_hint_y: 0.1
+                        text:"-Fearless"
+                        # TODO: Add on press and function
+
+                    KAMBLabel:
+                        size_hint_y: 0.1
+                        text:"Victory Points"
+
+                    KAMBLabel:
+                        size_hint_y: 0.1
+                        text:"Death Cheques"
+
+                    KAMBLabel:
+                        size_hint_y: 0.1
+                        text: str(app.vps)
+
+                    KAMBLabel:
+                        size_hint_y: 0.1
+                        text: str(app.death_checks)
+
+        GridLayout:
+            size_hint_min_y: root.height * 0.25
+            cols:1
+            size_hint_y: 0.3
+
+            KAMBLabel:
+                text:"Worn"
+            TextInput:
+                id:worn
+                text: str(app.armour_name)
+
+            GridLayout:
+                cols:2
+                KAMBLabel:
+                    text:"Wrong Paw"
+
+                KAMBLabel:
+                    text:"Right Paw"
+
+                TextInput:
+                    id:wrong_paw
+                    text: str(app.gear_name)
+
+                TextInput:
+                    id:right_paw
+                    text: str(app.weapon_name)
+
+        GridLayout:
+            size_hint_y: 0.1
+            cols:4
+
+            KAMBButton:
+                text:"Death Cheque"
+                on_press:
+                    app.death_check()
+
+            KAMBButton:
+                text:"Victory Point"
+                on_press:
+                    app.victory_point()
+
+            KAMBButton:
+                text:"-Hits"
+                on_press:
+                    root.minus_hit()
+
+            KAMBButton:
+                text:"Use Magick"
+                on_press:
+                    root.use_magick()
