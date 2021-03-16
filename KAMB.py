@@ -1,5 +1,4 @@
 import kivy
-from kivy_deps import sdl2, glew
 from random import randint
 from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
@@ -7,28 +6,82 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.properties import NumericProperty, ObjectProperty, StringProperty
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
-from kivy.uix.button import Button
-from items import basic_armour, dangerous_armour, basic_weapon, basic_ranged, dangerous_weapon, basic_gear, dangerous_gear, adventurers_cast_offs
-from magic import random_magick_table, magick_table
+from items import basic_armour, dangerous_armour, basic_weapon, basic_ranged, dangerous_weapon, basic_gear, dangerous_gear
 
 
 class OddRow(GridLayout):
+    """layout initialisation for kivy"""
     pass
 
 
 class EvenRow(GridLayout):
+    """layout initialisation for kivy"""
     pass
 
 
 class LandingScreen(Screen):
+    """initialise the landing screen in kivy and give a name"""
     Screen(name='LandingScreen')
 
 
 class StatsAndSkills(Screen):
+    """Screen initialisation, as well as setting properties for use in the GUI and
+    recovering them as they are generated.
+    Also does some checking and popups to inform the user what errors may have been made and how to fix them"""
+
     Screen(name='StatsAndSkills')
+
+    bully_check = ObjectProperty(None)
+    lift_check = ObjectProperty(None)
+    duel_check = ObjectProperty(None)
+    sport_check = ObjectProperty(None)
+    heft_check = ObjectProperty(None)
+    swim_check = ObjectProperty(None)
+    wrassle_check = ObjectProperty(None)
+    fear_check = ObjectProperty(None)
+    shoot_check = ObjectProperty(None)
+    lackey_check = ObjectProperty(None)
+    human_check = ObjectProperty(None)
+    sage_check = ObjectProperty(None)
+    trap_check = ObjectProperty(None)
+    tinker_check = ObjectProperty(None)
+    bard_check = ObjectProperty(None)
+    perform_check = ObjectProperty(None)
+    cook_check = ObjectProperty(None)
+    critter_check = ObjectProperty(None)
+    dungeon_check = ObjectProperty(None)
+    track_check = ObjectProperty(None)
+    nature_check = ObjectProperty(None)
+    trade_check = ObjectProperty(None)
+    fast_check = ObjectProperty(None)
+    ride_check = ObjectProperty(None)
+    hide_check = ObjectProperty(None)
+    sneak_check = ObjectProperty(None)
+    nurture_check = ObjectProperty(None)
+    steal_check = ObjectProperty(None)
+    wiggle_check = ObjectProperty(None)
 
     def get_stats(self):
         app = App.get_running_app()
+        self.ids.brawn1.text = str(app.brawn1)
+        self.ids.brawn2.text = str(app.brawn2)
+        self.ids.brawn.text = str(app.brawn)
+        self.ids.meat.text = str(app.meat)
+
+        self.ids.ego1.text = str(app.ego1)
+        self.ids.ego2.text = str(app.ego2)
+        self.ids.ego.text = str(app.ego)
+        self.ids.cunning.text = str(app.cunning)
+
+        self.ids.extraneous1.text = str(app.extraneous1)
+        self.ids.extraneous2.text = str(app.extraneous2)
+        self.ids.extraneous.text = str(app.extraneous)
+        self.ids.luck.text = str(app.luck)
+
+        self.ids.reflexes1.text = str(app.reflexes1)
+        self.ids.reflexes2.text = str(app.reflexes2)
+        self.ids.reflexes.text = str(app.reflexes)
+        self.ids.agility.text = str(app.agility)
 
         if app.ego in range(0, 5):
             app.max_skills = app.ego
@@ -43,24 +96,21 @@ class StatsAndSkills(Screen):
         self.ids.death_checks.text = str(app.death_checks)
         self.ids.vps.text = str(app.vps)
 
-    def magic(self):
-        app = App.get_running_app()
-        roll = sum(app.d6(2))
-        app.magick = random_magick_table[roll]
-
     def check_skills_and_move_on(self):
-        app = App.get_running_app()
-
+        brawn_checked = NumericProperty(0)
+        ego_checked = NumericProperty(0)
+        extraneous_checked = NumericProperty(0)
+        reflexes_checked = NumericProperty(0)
         brawn_checked = 0
         ego_checked = 0
         extraneous_checked = 0
         reflexes_checked = 0
 
+        app = App.get_running_app()
         app.brawn_skills = []
         app.ego_skills = []
         app.extraneous_skills = []
         app.reflexes_skills = []
-
         too_many_skills_popup = Popup(title='Too Many Skills Selected',
                                       content=Label(text='Seems you have checked too many boxes!'),
                                       size_hint=(0.6, 0.6))
@@ -77,15 +127,10 @@ at least 2 in each STAT before you
 get a third etc.""",
                                                                 halign='center'),
                                                   size_hint=(0.6, 0.6))
-
-        get_some_stats_popup = Popup(title="You don't seem to exist yet",
-                                     content=Label(text="You haven\'t clicked that button at the top yet.\nYou should do that to pop into existance,\nthen think about your upbringing (skills)"),
-                                     size_hint=(0.6, 0.6))
         app.brawn_skills.clear()
         app.ego_skills.clear()
         app.extraneous_skills.clear()
         app.reflexes_skills.clear()
-
         if self.bully_check.active:
             brawn_checked += 1
             app.brawn_skills.append('Bully')
@@ -173,51 +218,50 @@ get a third etc.""",
         if self.wiggle_check.active:
             reflexes_checked += 1
             app.reflexes_skills.append('Wiggle')
-
         num_checked = (brawn_checked + ego_checked + extraneous_checked + reflexes_checked)
-
+        max_per_stat = 0
         if app.max_skills <= 4:
             max_per_stat = 1
         else:
             max_per_stat = 2
+        if num_checked == 7 and app.max_skills == 7:
+            app.death_check()
 
-        if app.created == 0:
-            get_some_stats_popup.open()
-        elif not num_checked:
+        if not num_checked:
             no_skills_popup.open()
+
         elif num_checked > app.max_skills:
             too_many_skills_popup.open()
+
         elif brawn_checked > max_per_stat or ego_checked > max_per_stat or extraneous_checked > max_per_stat or reflexes_checked > max_per_stat:
             too_many_skills_in_one_stat_popup.open()
+
         elif brawn_checked > 1 or ego_checked > 1 or extraneous_checked > 1 or reflexes_checked > 1:
             if brawn_checked == 0 or ego_checked == 0 or extraneous_checked == 0 or reflexes_checked == 0:
                 too_many_skills_in_one_stat_popup.open()
             elif num_checked == 7 and app.max_skills == 7:
-                app.death_check()
                 app.setting()
                 if "Cook" not in app.extraneous_skills:
                     app.death_check()
-                if 'Lackey' in app.ego_skills:
-                    self.magic()
                 app.sm.current = 'EdgesBogiesAndEquipment'
 
             else:
                 if "Cook" not in app.extraneous_skills:
                     app.death_check()
-                if 'Lackey' in app.ego_skills:
-                    self.magic()
                 app.sm.current = 'EdgesBogiesAndEquipment'
                 app.setting()
         else:
             if "Cook" not in app.extraneous_skills:
                 app.death_check()
-            if 'Lackey' in app.ego_skills:
-                self.magic()
             app.sm.current = 'EdgesBogiesAndEquipment'
             app.setting()
 
 
 class EdgesBogiesAndEquipment(Screen):
+    """
+    Edges and Bogies and equipment screen initialisation,
+    popups for informing users of errors, and look ups for information stored in items.py
+    """
     Screen(name='EdgesBogiesAndEquipment')
     edges_and_bogies_needed_popup = Popup(title='You need to roll some +Edges and -Bogies',
                                           content=Label(text="""You haven't rolled your +Edges or -Bogies."
@@ -227,6 +271,7 @@ All Kobolds have these in their nature."""),
                                         size_hint=(0.6, 0.6),
                                         content=Label(text="""You aren't equipped to venture out of The Caves.
 Visit all three of the Three Great Piles!"""))
+
 
     def roll_edges_and_bogies(self):
         app = App.get_running_app()
@@ -264,7 +309,7 @@ Visit all three of the Three Great Piles!"""))
         app = App.get_running_app()
         if app.armour_rolled == 0:
             roll = app.d6(1)[0]
-            if 'Sport' in app.brawn_skills or 'Perform' in app.extraneous_skills:
+            if 'Sport' in app.brawn_skills:
                 app.armour = basic_armour[roll - 1]
             else:
                 app.armour = basic_armour[roll]
@@ -276,7 +321,7 @@ Visit all three of the Three Great Piles!"""))
         app = App.get_running_app()
         if app.armour_rolled == 0:
             roll = app.d6(1)[0]
-            if 'Lift' in app.brawn_skills or 'Perform' in app.extraneous_skills:
+            if 'Lift' in app.brawn_skills:
                 app.armour = dangerous_armour[(roll - 1)]
             else:
                 app.armour = basic_armour[roll]
@@ -285,57 +330,24 @@ Visit all three of the Three Great Piles!"""))
             app.armour_rolled += 1
             app.death_check()
 
-    def use_that_perform(self, roll):
-        app = App.get_running_app()
-        app.weapon = basic_ranged[roll]
-        app.weapon_name = app.weapon['Type']
-
-    def what_a_passe_role(self, roll):
-        app = App.get_running_app()
-        if 'Heft' in app.brawn_skills or 'Perform' in app.extraneous_skills:
-            app.weapon = basic_weapon[(roll - 1)]
-
-        else:
-            app.weapon = basic_weapon[roll]
-
-        app.weapon_name = str(app.weapon['Type'])
-        app.weapon_rolled += 1
-
-    def to_shoot_or_not_to_shoot(self, roll:int):
-        grid = GridLayout(cols=1)
-        popup = Popup(title="To Shoot, or Not to Shoot",
-                      content=grid,
-                      size_hint=(0.6, 0.6),
-                      auto_dismiss=False)
-        grid.add_widget(Label(text="So Keanu, do you want to pretend to be good with\nRanged weapons to dive into the\nThe Basic Ranged Weapon Pile?"))
-        innergrid = GridLayout(cols=2)
-        innergrid.add_widget(Button(text='Yes', on_press=lambda x: self.use_that_perform(roll), on_release=popup.dismiss))
-        innergrid.add_widget(Button(text='No', on_press=lambda x: self.what_a_passe_role(roll), on_release=popup.dismiss))
-        grid.add_widget(innergrid)
-        popup.open()
-
     def basic_weapon(self):
         app = App.get_running_app()
         if app.weapon_rolled == 0:
             roll = app.d6(1)[0]
-            if 'Perform' in app.extraneous_skills:
-                self.to_shoot_or_not_to_shoot(roll)
-            elif 'Shoot' in app.ego_skills:
+            if 'Shoot' in app.ego_skills:
                 app.weapon = basic_ranged[roll]
-                app.weapon_name = str(app.weapon['Type'])
-            elif 'Heft' in app.brawn_skills or 'Perform' in app.extraneous_skills:
+            elif 'Heft' in app.brawn_skills:
                 app.weapon = basic_weapon[(roll - 1)]
-                app.weapon_name = str(app.weapon['Type'])
             else:
                 app.weapon = basic_weapon[roll]
-                app.weapon_name = str(app.weapon['Type'])
+            app.weapon_name = str(app.weapon['Type'])
             app.weapon_rolled += 1
 
     def dangerous_weapon(self):
         app = App.get_running_app()
         if app.weapon_rolled == 0:
             roll = app.d6(1)[0]
-            if 'Duel' in app.brawn_skills or 'Perform' in app.extraneous_skills:
+            if 'Duel' in app.brawn_skills:
                 app.weapon = dangerous_weapon[(roll - 1)]
             else:
                 app.weapon = dangerous_weapon[roll]
@@ -343,61 +355,14 @@ Visit all three of the Three Great Piles!"""))
             app.weapon_rolled += 1
             app.death_check()
 
-    def gear_select(self, select: int):
-        app = App.get_running_app()
-        app.gear = adventurers_cast_offs[select]
-        app.gear_name = app.gear['Type']
-
-    def gear_choice(self, select: int, *args):
-        grid = GridLayout(cols=1)
-        popup = Popup(title=adventurers_cast_offs[select]['Type'],
-                      content=grid,
-                      size_hint=(0.6, 0.6),
-                      auto_dismiss=False)
-        inner_grid = GridLayout(cols=2)
-        grid.add_widget(Label(text=adventurers_cast_offs[select]['Description']))
-        inner_grid.add_widget(Button(text='Yes', on_press=lambda x: self.gear_select(select), on_release=popup.dismiss))
-        inner_grid.add_widget(Button(text='No', on_press=self.rogues_choice_popup, on_release=popup.dismiss))
-        grid.add_widget(inner_grid)
-
-        popup.open()
-
-    def rogues_choice_popup(self, *args):
-        grid = GridLayout(cols=1)
-        popup = Popup(title="Rogue's Choice",
-                      content=grid,
-                      size_hint=(0.6, 0.6),
-                      auto_dismiss=False)
-        grid.add_widget(Label(text="""Seems luck is on your side!
-Choose what you want from the Adventurer's Cast-Offs"""))
-
-        grid.add_widget(Button(text=adventurers_cast_offs[1]['Type'], on_press=lambda x: self.gear_choice(select=1), on_release=popup.dismiss))
-        grid.add_widget(Button(text=adventurers_cast_offs[2]['Type'], on_press=lambda x: self.gear_choice(select=2), on_release=popup.dismiss))
-        grid.add_widget(Button(text=adventurers_cast_offs[3]['Type'], on_press=lambda x: self.gear_choice(select=3), on_release=popup.dismiss))
-        grid.add_widget(Button(text=adventurers_cast_offs[4]['Type'], on_press=lambda x: self.gear_choice(select=4), on_release=popup.dismiss))
-        grid.add_widget(Button(text=adventurers_cast_offs[5]['Type'], on_press=lambda x: self.gear_choice(select=5), on_release=popup.dismiss))
-        grid.add_widget(Button(text=adventurers_cast_offs[6]['Type'], on_press=lambda x: self.gear_choice(select=6), on_release=popup.dismiss))
-
-        popup.open()
-
     def basic_gear(self):
         app = App.get_running_app()
         if app.gear_rolled == 0:
             roll = app.d6(1)[0]
-            if 'Nature' in app.extraneous_skills or 'Perform' in app.extraneous_skills:
+            if 'Nature' in app.extraneous_skills:
                 app.gear = basic_gear[(roll - 1)]
             else:
                 app.gear = basic_gear[roll]
-
-            if app.gear['Type'] == 'Adventurers Cast-offs':
-                roll_adventure_gear = app.d6(1)[0]
-
-                if 'Steal' in app.reflexes_skills or 'Perform' in app.extraneous_skills:
-                    app.gear = adventurers_cast_offs[roll_adventure_gear - 1]
-                    if app.gear['Type'] == 'Rogue\'s Choice':
-                        self.rogues_choice_popup()
-                else:
-                    app.gear = adventurers_cast_offs[roll_adventure_gear]
             app.gear_name = str(app.gear['Type'])
             app.gear_rolled += 1
 
@@ -405,14 +370,10 @@ Choose what you want from the Adventurer's Cast-Offs"""))
         app = App.get_running_app()
         if app.gear_rolled == 0:
             roll = app.d6(1)[0]
-            if 'Dungeon' in app.extraneous_skills or 'Perform' in app.extraneous_skills:
+            if 'Dungeon' in app.extraneous_skills:
                 app.gear = dangerous_gear[(roll - 1)]
             else:
                 app.gear = dangerous_gear[roll]
-
-            if app.gear['Type'] == 'Spell Pages':
-                app.spell_pages = sum(app.d6(1))
-
             app.gear_name = str(app.gear['Type'])
             app.gear_rolled += 1
             app.death_check()
@@ -432,6 +393,10 @@ Choose what you want from the Adventurer's Cast-Offs"""))
 
 
 class KoboldSheet(Screen):
+    """
+    Character sheet generated with information generated from character creation, also some buttons to add
+    deathchecks, take hits, and text boxes for the equipment in use
+    """
     Screen(name='KoboldSheet')
 
     def minus_hit(self):
@@ -450,89 +415,15 @@ class KoboldSheet(Screen):
         if app.hits <= 0:
             app.death()
 
-    def use_luck(self):
-        app = App.get_running_app()
-        if app.luck:
-            app.luck -= 1
 
-    def use_spell_page(self, *args):
-        app = App.get_running_app()
-        app.spell_pages = app.spell_pages - 1
-        roll = sum(app.d6(2))
-        spell = random_magick_table[roll]
-        description = magick_table[spell]
-        popup = Popup(title=spell,
-                      size_hint=(0.6, 0.6),
-                      content=Label(text=description),
-                      on_dismiss=self.spell_pages_popup)
-        popup.open()
-
-    def lackey_popup(self, *args):
-        app = App.get_running_app()
-        grid = GridLayout(cols=1)
-        popup = Popup(title='You know a spell: {}'.format(app.magick),
-                      size_hint=(0.6, 0.6),
-                      content=grid)
-        grid.add_widget(Label(text=magick_table[app.magick]))
-        grid.add_widget((Button(text="Use spell", on_press=app.death_check, on_release=popup.dismiss)))
-
-        popup.open()
-
-    def spell_pages_popup(self, *args):
-        app = App.get_running_app()
-        grid = GridLayout(cols=1)
-        popup = Popup(title='You have pages of spells',
-                      size_hint=(0.6, 0.6),
-                      content=grid)
-        grid.add_widget(Label(halign='center', text="""Kobolds karnt reed gud,
-SO! instead of reciting the spell,
-just launch the page at whatever it is,
-and see what happens"""))
-        grid.add_widget(Label(halign='center', text="You have {} spell page/s left".format(app.spell_pages)))
-        grid.add_widget(Button(text="Use spell page", on_press=self.use_spell_page, on_release=popup.dismiss))
-
-
-        popup.open()
-
-    no_magic_popup = Popup(title='We got a Muggle over here!',
-                           size_hint=(0.6, 0.6),
-                           content=Label(text="You don't know any magick!"))
-
-    def magick_and_pages_popup(self):
-        app = App.get_running_app()
-        grid = GridLayout(cols=1)
-        grid.add_widget(Label(halign='center', text="""Whoa!
-What a spell caster you are!
-Not one but TWO ways to cast a spell!
-Which one do you want to use?"""))
-        inner_grid = (GridLayout(cols=2))
-        lackey_button = Button(text=app.magick, on_press=self.lackey_popup)
-        pages_button = Button(text='Spell Pages', on_press=self.spell_pages_popup)
-        inner_grid.add_widget(lackey_button)
-        inner_grid.add_widget(pages_button)
-        grid.add_widget(inner_grid)
-
-        popup = Popup(title='You have more than one way to cast a spell',
-                      size_hint=(0.6, 0.6),
-                      content=grid,
-                                   )
-        popup.open()
-
-    def use_magick(self):
-        app = App.get_running_app()
-        if app.magick and app.gear_name == 'Spell Pages':
-            self.magick_and_pages_popup()
-        elif app.magick:
-            self.lackey_popup()
-        elif app.gear_name == 'Spell Pages':
-            self.spell_pages_popup()
-        else:
-            self.no_magic_popup.open()
 
 
 class KAMBApp(App):
+    """
+    App initilisation as well as main data to be carried over between screens held in this class.
+    as well as methods used to generate said character
+    """
     name = StringProperty("Name Your Kobold")
-    created = NumericProperty(0)
     brawn1 = NumericProperty(0)
     brawn2 = NumericProperty(0)
     brawn = NumericProperty(0)
@@ -579,9 +470,6 @@ class KAMBApp(App):
     armour_hits = NumericProperty(0)
     hits = NumericProperty(0)
     max_hits = NumericProperty(0)
-    string_of_skills = StringProperty("")
-    magick = StringProperty("")
-    spell_pages = NumericProperty(0)
 
     sm = ScreenManager()
 
@@ -613,7 +501,6 @@ class KAMBApp(App):
                 self.death_check()
             if self.extraneous == 10:
                 self.victory_point()
-            self.created = 1
 
     @classmethod
     def d6(cls, n):
@@ -648,7 +535,6 @@ But feel free to now create a new kobold.""",
             size_hint=(0.6, 0.6)
         )
         self.name = ""
-        self.created = 0
         self.brawn1 = 0
         self.brawn2 = 0
         self.brawn = 0
@@ -691,17 +577,15 @@ But feel free to now create a new kobold.""",
         self.armour_hits = 0
         self.hits = 0
         self.max_hits = 0
-        self.string_of_skills = ""
+
         self.edges_rolled = 0
         self.armour_rolled = 0
         self.weapon_rolled = 0
         self.gear_rolled = 0
-        self.magick = ""
-        self.spell_pages = 0
         death_popup.open()
         self.sm.current = 'LandingScreen'
 
-    def death_check(self, *args):
+    def death_check(self):
         roll = sum(self.d6(2))
         current = self.death_checks
 
@@ -746,18 +630,13 @@ But feel free to now create a new kobold.""",
         self.reflexes_skill1 = self.reflexes_skills[0]
         self.reflexes_skill2 = self.reflexes_skills[1]
 
-        list_of_skills = [self.brawn_skill1, self.brawn_skill2, self.ego_skill1, self.ego_skill2, self.extraneous_skill1, self.extraneous_skill2, self.reflexes_skill1, self.reflexes_skill2]
-
-        for skill in list_of_skills:
-            if skill:
-                self.string_of_skills = self.string_of_skills + skill + " "
-
     def build(self):
         KAMBApp.sm.add_widget(LandingScreen(name='LandingScreen'))
         KAMBApp.sm.add_widget(StatsAndSkills(name='StatsAndSkills'))
         KAMBApp.sm.add_widget(EdgesBogiesAndEquipment(name='EdgesBogiesAndEquipment'))
         KAMBApp.sm.add_widget(KoboldSheet(name='KoboldSheet'))
         return KAMBApp.sm
+        # TODO: Reactivate pages
 
     kobold_senses = Popup(title="+Kobold Senses",
                           content=Label(text="""For humans the sense of smell strongly informs the sense of taste.
@@ -766,10 +645,13 @@ But feel free to now create a new kobold.""",
     In addition, your eyes are so accustomed to living and hunting in deep, 
     dark caves that you can see as well in near total blackness
     as you can in the light (mostly through echo-taste-location).""",
-                                        halign="center"),
+                                            halign="center"),
                           size_hint=(0.7, 0.7))
 
     def kobold_senses_popup(self):
+        """
+        test for popup tool tips, to be expanded to all edges, bogies, skills, stats, and potentially equipment
+        """
         self.kobold_senses.open()
 
 
