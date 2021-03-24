@@ -13,24 +13,29 @@ from magic import random_magick_table, magick_table
 
 
 class OddRow(GridLayout):
+    #initialises kivy layout element to be called later and can be edited in the kivy script for different colour
     pass
 
 
 class EvenRow(GridLayout):
+    #initialises kivy layout element to be called later and can be edited in the kivy script for different colour
     pass
 
 
 class LandingScreen(Screen):
+    #initialises the landing screen for the app and where users are taken on death of character
     Screen(name='LandingScreen')
 
 
 class StatsAndSkills(Screen):
+    #screen one of the character creation, begins creation of stats and skill selection of the character
     Screen(name='StatsAndSkills')
 
     def get_stats(self):
         app = App.get_running_app()
 
         if app.ego in range(0, 5):
+            #tests from random number generation for ego as has strange number of skills based on EGO
             app.max_skills = app.ego
             self.ids.max_skills.text = str(app.ego)
         elif app.ego == 5:
@@ -44,11 +49,13 @@ class StatsAndSkills(Screen):
         self.ids.vps.text = str(app.vps)
 
     def magic(self):
+        #rolls magic spell if needed from !Lackey and stores the result for the character sheet
         app = App.get_running_app()
         roll = sum(app.d6(2))
         app.magick = random_magick_table[roll]
 
     def check_skills_and_move_on(self):
+        #checks stats and skills are selected, then ensures that each obeys character creation rules, i.e. one skill in all stats before getting a second
         app = App.get_running_app()
 
         brawn_checked = 0
